@@ -24,12 +24,24 @@
     <ClCompile Include="lab1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lab3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lab2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lab1.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lab3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

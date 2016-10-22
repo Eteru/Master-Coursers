@@ -81,8 +81,8 @@
     <LibraryPath>C:\libs\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\libs\opencv\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\libs\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\libs\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\libs\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,11 +135,15 @@
   <ItemGroup>
     <ClCompile Include="lab1.cpp" />
     <ClCompile Include="lab2.cpp" />
+    <ClCompile Include="lab3.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lab1.hpp" />
     <ClInclude Include="lab2.hpp" />
+    <ClInclude Include="lab3.hpp" />
+    <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

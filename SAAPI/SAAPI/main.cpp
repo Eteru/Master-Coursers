@@ -3,6 +3,7 @@
 
 #include "lab1.hpp"
 #include "lab2.hpp"
+#include "lab3.hpp"
 
 
 int main(void)
@@ -12,7 +13,9 @@ int main(void)
 	// lab1::ex3_4();
 
 	// lab2::ex1_2();
-	lab2::ex3_4();
+	// lab2::ex3_4();
+
+	lab3::ex1_2();
 
 	return 0;
 }
