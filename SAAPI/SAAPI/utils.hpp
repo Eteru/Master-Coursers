@@ -16,4 +16,7 @@ namespace utils
 
 	void makeItGray(cv::Mat &colored, cv::Mat &gray);
 	void showThreeMats(cv::Mat &I1, cv::Mat &I2, cv::Mat &I3, int dataType, std::string name);
+
+	void showGrayHistogram(const cv::Mat &img, const std::string &windowName);
+	void showBGRHistogram(const cv::Mat &img, const std::string &windowName);
 }
