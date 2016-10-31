@@ -19,4 +19,8 @@ namespace utils
 
 	void showGrayHistogram(const cv::Mat &img, const std::string &windowName);
 	void showBGRHistogram(const cv::Mat &img, const std::string &windowName);
+
+	void imHist(const cv::Mat &image, std::vector<int> &histogram);
+	void cumHist(const std::vector<int> &histogram, std::vector<int> &cumhistogram);
+	void equaliseHistogram(const cv::Mat &img, cv::Mat &outimg);
 }

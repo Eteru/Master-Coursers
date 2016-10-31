@@ -18,7 +18,7 @@ int main(void)
 
 	// lab3::ex1_2();
 
-	lab4::ex2();
+	lab4::ex3();
 
 	return 0;
 }
