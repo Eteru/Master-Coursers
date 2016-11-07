@@ -1,7 +1,10 @@
 
 #include "utils.hpp"
 
+#include <iostream>
 #include <algorithm>
+#include <numeric>
+#include <functional>
 
 namespace utils
 {
@@ -186,5 +189,173 @@ namespace utils
 		for (int x = 0; x < img.rows; ++x)
 			for (int y = 0; y < img.cols; ++y)
 				outimg.at<uchar>(x, y) = Sk[img.at<uchar>(x, y)];
+	}
+
+	void maFilter(const cv::Mat &img, cv::Mat &outimg)
+	{
+		const std::vector<int> dx = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+		const std::vector<int> dy = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+		const int sz = 9;
+		const float factor = 1.f / 9;
+
+		for (int i = 0; i < img.rows; ++i)
+			for (int j = 0; j < img.cols; ++j) {
+				int sum = 0;
+				for (int k = 0; k < sz; ++k) {
+					if (i + dx[k] >= 0 && i + dx[k] < img.rows &&
+						j + dy[k] >= 0 && j + dy[k] < img.cols)
+						sum += static_cast<int>(img.at<uchar>(i + dx[k], j + dy[k]));
+				}
+				outimg.at<uchar>(i, j) = static_cast<int>(sum * factor);
+			}
+	}
+
+	void medianFilter(const cv::Mat &img, cv::Mat &outimg)
+	{
+		const std::vector<int> dx = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+		const std::vector<int> dy = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+		const int sz = 9;
+		const float factor = 1.f / 9;
+
+		for (int i = 0; i < img.rows; ++i)
+			for (int j = 0; j < img.cols; ++j) {
+				std::vector<int> medianHolder;
+				for (int k = 0; k < sz; ++k) {
+					if (i + dx[k] >= 0 && i + dx[k] < img.rows &&
+						j + dy[k] >= 0 && j + dy[k] < img.cols)
+						medianHolder.push_back(static_cast<int>(img.at<uchar>(i + dx[k], j + dy[k])));
+				}
+				std::sort(medianHolder.begin(), medianHolder.end());
+				outimg.at<uchar>(i, j) = medianHolder[medianHolder.size() / 2];
+			}
+	}
+
+	double variance(std::vector<int> values) {
+		if (values.size() == 1) return 1.7e38; // Set value big enough
+
+		double sum = std::accumulate(values.begin(), values.end(), 0.0);
+		double mean = sum / values.size();
+
+		double temp = 0;
+		for (int value : values) {
+			temp += (value - mean) * (value - mean);
+		}
+
+		return sqrt(temp / (values.size() - 1));
+	}
+
+	void kuwaharaFilter(const cv::Mat &img, cv::Mat &outimg, const int kernel)
+	{
+		const std::vector<int> dx = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+		const std::vector<int> dy = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+		const int sz = 9;
+		const float factor = 1.f / 9;
+
+		for (int i = 0; i < img.rows; ++i)
+			for (int j = 0; j < img.cols; ++j) {
+				// Regions
+				std::vector<int> r1, r2, r3, r4;
+				double v1, v2, v3, v4;
+				for (int ri = std::max(0, i - kernel); ri <= i; ++ri)
+					for (int rj = std::max(0, j - kernel); rj <= j; ++rj) {
+						r1.push_back(static_cast<int>(img.at<uchar>(ri, rj)));
+					}
+
+				for (int ri = std::max(0, i - kernel); ri <= i; ++ri)
+					for (int rj = j; rj < std::min(img.cols, j + kernel); ++rj) {
+						r2.push_back(static_cast<int>(img.at<uchar>(ri, rj)));
+					}
+
+				for (int ri = i; ri < std::min(img.rows, i + kernel); ++ri)
+					for (int rj = std::max(0, j - kernel); rj <= j; ++rj) {
+						r3.push_back(static_cast<int>(img.at<uchar>(ri, rj)));
+					}
+
+				for (int ri = i; ri < std::min(img.rows, i + kernel); ++ri)
+					for (int rj = j; rj < std::min(img.cols, j + kernel); ++rj) {
+						r4.push_back(static_cast<int>(img.at<uchar>(ri, rj)));
+					}
+
+				v1 = variance(r1);
+				v2 = variance(r2);
+				v3 = variance(r3);
+				v4 = variance(r4);
+
+				double minValue = std::min(v1, std::min(v2, std::min(v3, v4)));
+
+				if (minValue - v1 <= 0.0001)
+					outimg.at<uchar>(i, j) = static_cast<int>(std::accumulate(r1.begin(), r1.end(), 0.0) / r1.size());
+				else if (minValue - v2 <= 0.0001)
+					outimg.at<uchar>(i, j) = static_cast<int>(std::accumulate(r2.begin(), r2.end(), 0.0) / r2.size());
+				else if (minValue - v3 <= 0.0001)
+					outimg.at<uchar>(i, j) = static_cast<int>(std::accumulate(r3.begin(), r3.end(), 0.0) / r3.size());
+				else if (minValue - v4 <= 0.0001)
+					outimg.at<uchar>(i, j) = static_cast<int>(std::accumulate(r4.begin(), r4.end(), 0.0) / r4.size());
+
+			}
+	}
+
+	void lowPassFilter(const cv::Mat &src, cv::Mat &dst, const int D)
+	{
+		cv::Mat local;
+		src.convertTo(local, CV_32F);
+		cv::Mat planes[] = { cv::Mat_<float>(local), cv::Mat::zeros(local.size(), CV_32F) };
+		cv::Mat complexI;
+		cv::merge(planes, 2, complexI);
+
+		cv::dft(complexI, complexI);
+
+		cv::split(complexI, planes);
+
+		for (int i = 0; i < planes[0].rows; ++i) {
+			for (int j = 0; j < planes[0].cols; ++j) {
+				float dist = static_cast<float>(sqrt(i*i + j*j));
+
+				planes[0].at<float>(i, j) = dist <= D ? planes[0].at<float>(i, j) : 0.f;
+				planes[1].at<float>(i, j) = dist <= D ? planes[1].at<float>(i, j) : 0.f;
+			}
+		}
+		imshow("Low pass F", planes[0]);
+		cv::Mat combined;
+		cv::Mat arr[2] = { planes[0], planes[1] };
+		merge(arr, 2, combined);
+
+		cv::dft(combined, combined, cv::DFT_INVERSE | cv::DFT_SCALE);
+		cv::normalize(combined, combined, 0, 1, CV_MINMAX);
+		cv::split(combined, arr);
+
+		arr[0].copyTo(dst);
+	}
+
+	void highPassFilter(const cv::Mat &src, cv::Mat &dst, const int D)
+	{
+		cv::Mat local;
+		src.convertTo(local, CV_32F);
+		cv::Mat planes[] = { cv::Mat_<float>(local), cv::Mat::zeros(local.size(), CV_32F) };
+		cv::Mat complexI;
+		cv::merge(planes, 2, complexI);
+
+		cv::dft(complexI, complexI);
+
+		cv::split(complexI, planes);
+
+		for (int i = 0; i < planes[0].rows; ++i) {
+			for (int j = 0; j < planes[0].cols; ++j) {
+				float dist = static_cast<float>(sqrt(i*i + j*j));
+
+				planes[0].at<float>(i, j) = dist > D ? planes[0].at<float>(i, j) : 0.f;
+				planes[1].at<float>(i, j) = dist > D ? planes[1].at<float>(i, j) : 0.f;
+			}
+		}
+		imshow("High pass F", planes[0]);
+		cv::Mat combined;
+		cv::Mat arr[2] = { planes[0], planes[1] };
+		merge(arr, 2, combined);
+
+		cv::dft(combined, combined, cv::DFT_INVERSE | cv::DFT_SCALE);
+		cv::normalize(combined, combined, 0, 1, CV_MINMAX);
+		cv::split(combined, arr);
+
+		arr[0].copyTo(dst);
 	}
 }

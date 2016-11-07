@@ -23,4 +23,10 @@ namespace utils
 	void imHist(const cv::Mat &image, std::vector<int> &histogram);
 	void cumHist(const std::vector<int> &histogram, std::vector<int> &cumhistogram);
 	void equaliseHistogram(const cv::Mat &img, cv::Mat &outimg);
+
+	void maFilter(const cv::Mat &img, cv::Mat &outimg);
+	void medianFilter(const cv::Mat &img, cv::Mat &outimg);
+	void kuwaharaFilter(const cv::Mat &img, cv::Mat &outimg, const int kernel);
+	void lowPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);
+	void highPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);
 }

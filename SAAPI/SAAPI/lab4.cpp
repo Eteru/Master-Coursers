@@ -69,7 +69,7 @@ namespace lab4
 		// Scale the histogram
 		std::vector<int> Sk(256, 0);
 		for (int i = 0; i < 256; ++i)
-			Sk[i] = cvRound(static_cast<double>(cumhistogram[i] * alpha));
+			Sk[i] = static_cast<int>(cumhistogram[i] * alpha);
 
 		cv::Mat outimg(img.rows, img.cols, CV_8U);
 
