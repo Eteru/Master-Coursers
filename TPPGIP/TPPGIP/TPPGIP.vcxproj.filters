@@ -18,6 +18,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glm\common.hpp">
@@ -470,6 +473,9 @@
     <ClInclude Include="glew\wglew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glm\detail\func_common.inl">
@@ -813,6 +819,12 @@
     </None>
     <None Include="glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="vertexShader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShader.glsl">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>
