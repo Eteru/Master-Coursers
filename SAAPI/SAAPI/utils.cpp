@@ -358,4 +358,45 @@ namespace utils
 
 		arr[0].copyTo(dst);
 	}
+
+	void geomFilter(const cv::Mat &img, cv::Mat &outimg)
+	{
+		const std::vector<int> dx = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+		const std::vector<int> dy = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+		const int sz = 9;
+		const float factor = 1.f / 9;
+
+		for (int i = 0; i < img.rows; ++i)
+			for (int j = 0; j < img.cols; ++j) {
+				double prod = 1;
+				for (int k = 0; k < sz; ++k) {
+					if (i + dx[k] >= 0 && i + dx[k] < img.rows &&
+						j + dy[k] >= 0 && j + dy[k] < img.cols)
+						prod *= static_cast<int>(img.at<uchar>(i + dx[k], j + dy[k]));
+				}
+				outimg.at<uchar>(i, j) = static_cast<int>(std::pow(prod, factor));
+			}
+	}
+
+	void counterArmonicFilter(const cv::Mat &img, cv::Mat &outimg, float Q)
+	{
+		const std::vector<int> dx = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+		const std::vector<int> dy = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+		const int sz = 9;
+		const float factor = 1.f / 9;
+
+		for (int i = 0; i < img.rows; ++i)
+			for (int j = 0; j < img.cols; ++j) {
+				double sumTop = 0, sumBot = 0;
+				for (int k = 0; k < sz; ++k) {
+					if (i + dx[k] >= 0 && i + dx[k] < img.rows &&
+						j + dy[k] >= 0 && j + dy[k] < img.cols)
+					{
+						sumTop += std::pow(static_cast<int>(img.at<uchar>(i + dx[k], j + dy[k])), Q + 1);
+						sumBot += std::pow(static_cast<int>(img.at<uchar>(i + dx[k], j + dy[k])), Q);
+					}
+				}
+				outimg.at<uchar>(i, j) = static_cast<int>(sumTop / sumBot);
+			}
+	}
 }

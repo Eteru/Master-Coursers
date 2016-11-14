@@ -26,6 +26,8 @@ namespace utils
 
 	void maFilter(const cv::Mat &img, cv::Mat &outimg);
 	void medianFilter(const cv::Mat &img, cv::Mat &outimg);
+	void geomFilter(const cv::Mat &img, cv::Mat &outimg);
+	void counterArmonicFilter(const cv::Mat &img, cv::Mat &outimg, float Q);
 	void kuwaharaFilter(const cv::Mat &img, cv::Mat &outimg, const int kernel);
 	void lowPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);
 	void highPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);

@@ -138,6 +138,7 @@
     <ClCompile Include="lab3.cpp" />
     <ClCompile Include="lab4.cpp" />
     <ClCompile Include="lab5.cpp" />
+    <ClCompile Include="lab6.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="lab3.hpp" />
     <ClInclude Include="lab4.hpp" />
     <ClInclude Include="lab5.hpp" />
+    <ClInclude Include="lab6.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

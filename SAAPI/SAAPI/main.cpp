@@ -6,6 +6,7 @@
 #include "lab3.hpp"
 #include "lab4.hpp"
 #include "lab5.hpp"
+#include "lab6.hpp"
 
 
 int main(void)
@@ -25,7 +26,12 @@ int main(void)
 
 	// lab5::ex1();
 	// lab5::ex2();
-	lab5::ex3();
+	// lab5::ex3();
+
+	// lab6::ex1();
+	// lab6::ex2();
+	lab6::ex3();
+	// lab6::ex4();
 
 	return 0;
 }
