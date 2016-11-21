@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#define PI 3.14159265
+#define PI 3.1415f
 
 namespace utils
 {
@@ -29,6 +29,9 @@ namespace utils
 	void geomFilter(const cv::Mat &img, cv::Mat &outimg);
 	void counterArmonicFilter(const cv::Mat &img, cv::Mat &outimg, float Q);
 	void kuwaharaFilter(const cv::Mat &img, cv::Mat &outimg, const int kernel);
+
 	void lowPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);
 	void highPassFilter(const cv::Mat &src, cv::Mat &dst, const int D);
+	void rejectBandFilter(const cv::Mat &src, cv::Mat &dst, const int D, const int W);
+	void bandPassFilter(const cv::Mat &src, cv::Mat &dst, const int D, const int W);
 }

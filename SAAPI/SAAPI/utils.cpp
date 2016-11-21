@@ -193,8 +193,8 @@ namespace utils
 
 	void maFilter(const cv::Mat &img, cv::Mat &outimg)
 	{
-		const std::vector<int> dx = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
-		const std::vector<int> dy = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+		const std::vector<int> dx = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+		const std::vector<int> dy = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
 		const int sz = 9;
 		const float factor = 1.f / 9;
 
@@ -315,7 +315,7 @@ namespace utils
 				planes[1].at<float>(i, j) = dist <= D ? planes[1].at<float>(i, j) : 0.f;
 			}
 		}
-		imshow("Low pass F", planes[0]);
+
 		cv::Mat combined;
 		cv::Mat arr[2] = { planes[0], planes[1] };
 		merge(arr, 2, combined);
@@ -347,7 +347,73 @@ namespace utils
 				planes[1].at<float>(i, j) = dist > D ? planes[1].at<float>(i, j) : 0.f;
 			}
 		}
-		imshow("High pass F", planes[0]);
+
+		cv::Mat combined;
+		cv::Mat arr[2] = { planes[0], planes[1] };
+		merge(arr, 2, combined);
+
+		cv::dft(combined, combined, cv::DFT_INVERSE | cv::DFT_SCALE);
+		cv::normalize(combined, combined, 0, 1, CV_MINMAX);
+		cv::split(combined, arr);
+
+		arr[0].copyTo(dst);
+	}
+
+	void rejectBandFilter(const cv::Mat &src, cv::Mat &dst, const int D, const int W)
+	{
+		cv::Mat local;
+		src.convertTo(local, CV_32F);
+		cv::Mat planes[] = { cv::Mat_<float>(local), cv::Mat::zeros(local.size(), CV_32F) };
+		cv::Mat complexI;
+		cv::merge(planes, 2, complexI);
+
+		cv::dft(complexI, complexI);
+
+		cv::split(complexI, planes);
+
+		const float lowerBound = D - static_cast<float>(W) / 2;
+		const float upperBound = D + static_cast<float>(W) / 2;
+		for (int i = 0; i < planes[0].rows; ++i) {
+			for (int j = 0; j < planes[0].cols; ++j) {
+				float dist = static_cast<float>(sqrt(i*i + j*j));
+
+				planes[0].at<float>(i, j) = (dist < lowerBound || dist > upperBound) ? planes[0].at<float>(i, j) : 0.f;
+				planes[1].at<float>(i, j) = (dist < lowerBound || dist > upperBound) ? planes[1].at<float>(i, j) : 0.f;
+			}
+		}
+		cv::Mat combined;
+		cv::Mat arr[2] = { planes[0], planes[1] };
+		merge(arr, 2, combined);
+
+		cv::dft(combined, combined, cv::DFT_INVERSE | cv::DFT_SCALE);
+		cv::normalize(combined, combined, 0, 1, CV_MINMAX);
+		cv::split(combined, arr);
+
+		arr[0].copyTo(dst);
+	}
+
+	void bandPassFilter(const cv::Mat &src, cv::Mat &dst, const int D, const int W)
+	{
+		cv::Mat local;
+		src.convertTo(local, CV_32F);
+		cv::Mat planes[] = { cv::Mat_<float>(local), cv::Mat::zeros(local.size(), CV_32F) };
+		cv::Mat complexI;
+		cv::merge(planes, 2, complexI);
+
+		cv::dft(complexI, complexI);
+
+		cv::split(complexI, planes);
+
+		const float lowerBound = D - static_cast<float>(W) / 2;
+		const float upperBound = D + static_cast<float>(W) / 2;
+		for (int i = 0; i < planes[0].rows; ++i) {
+			for (int j = 0; j < planes[0].cols; ++j) {
+				float dist = static_cast<float>(sqrt(i*i + j*j));
+
+				planes[0].at<float>(i, j) = (dist >= lowerBound && dist <= upperBound) ? planes[0].at<float>(i, j) : 0.f;
+				planes[1].at<float>(i, j) = (dist >= lowerBound && dist <= upperBound) ? planes[1].at<float>(i, j) : 0.f;
+			}
+		}
 		cv::Mat combined;
 		cv::Mat arr[2] = { planes[0], planes[1] };
 		merge(arr, 2, combined);
@@ -399,4 +465,6 @@ namespace utils
 				outimg.at<uchar>(i, j) = static_cast<int>(sumTop / sumBot);
 			}
 	}
+
+
 }
