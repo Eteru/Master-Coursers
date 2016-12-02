@@ -8,6 +8,7 @@
 #include "lab5.hpp"
 #include "lab6.hpp"
 #include "lab7.hpp"
+#include "lab8.hpp"
 
 
 int main(void)
@@ -36,6 +37,12 @@ int main(void)
 
 	// lab7::ex1();
 	// lab7::ex2();
-	lab7::ex3();
+	// lab7::ex3();
+
+	// lab8::ex1();
+	// lab8::ex2();
+	// lab8::ex3();
+	lab8::ex4();
+
 	return 0;
 }

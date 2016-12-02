@@ -4,7 +4,7 @@
 #include <opencv2\imgproc\imgproc.hpp>
 #include <cmath>
 
-#define PI 3.14159265
+#include "utils.hpp"
 
 namespace lab2
 {

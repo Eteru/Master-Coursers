@@ -42,6 +42,9 @@
     <ClCompile Include="lab7.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lab8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lab2.hpp">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lab7.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lab8.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
