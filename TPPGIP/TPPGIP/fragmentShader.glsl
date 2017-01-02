@@ -26,7 +26,7 @@ uniform mat4 V;
 // uniform vec3 LightPosition_worldspace2;
 
 const int numberOfLights = 10;
-vec3 LightColor[numberOfLights];
+vec4 LightColor[numberOfLights];
 vec3 LightDir[numberOfLights];
 
 void main()
@@ -34,22 +34,25 @@ void main()
 	// Center of aurora
 	vec3 centerPosition = vec3(0.0, 0.0, 0.0);
 	float opacity = 100.0;
+	float cutoff = cos(14);
+	float outerCutoff = cos(17.5);
 	// compute distance on x & y
-	float fragmentDist = sqrt(fragmentPosition.x * fragmentPosition.x + fragmentPosition.y * fragmentPosition.y);
+	/*float fragmentDist = sqrt(fragmentPosition.x * fragmentPosition.x + fragmentPosition.y * fragmentPosition.y);
 	fragmentDist = (fragmentDist > 25) ? fragmentDist - 25 : 0;
 	opacity -= fragmentDist;
+	opacity /= 100.f;*/
 
 	// Light emission properties
-	LightColor[0] = vec3(0.32, 0.49, 0.36);
-	LightColor[1] = vec3(1.0, 0.4, 0.33);
-	LightColor[2] = vec3(0.32, 0.77, 0.56);
-	LightColor[3] = vec3(1.0, 0.0, 0.0);
-	LightColor[4] = vec3(0.0, 1.0, 1.0);
-	LightColor[5] = vec3(1.0, 0.0, 0.1);
-	LightColor[6] = vec3(1.0, 1.0, 0.0);
-	LightColor[7] = vec3(0.0, 1.0, 0.0);
-	LightColor[8] = vec3(1.0, 0.0, 0.0);
-	LightColor[9] = vec3(0.0, 0.0, 1.0);
+	LightColor[0] = vec4(0.32, 0.49, 0.36, 1);
+	LightColor[1] = vec4(1.0, 0.4, 0.33, 1);
+	LightColor[2] = vec4(0.32, 0.77, 0.56, 1);
+	LightColor[3] = vec4(1.0, 0.0, 0.0, 1);
+	LightColor[4] = vec4(0.0, 1.0, 1.0, 1);
+	LightColor[5] = vec4(1.0, 0.0, 0.1, 1);
+	LightColor[6] = vec4(1.0, 1.0, 0.0, 1);
+	LightColor[7] = vec4(0.0, 1.0, 0.0, 1);
+	LightColor[8] = vec4(1.0, 0.0, 0.0, 1);
+	LightColor[9] = vec4(0.0, 0.0, 1.0, 1);
 
 
 	LightDir[0] = LightDirection_cameraspace0;
@@ -66,18 +69,17 @@ void main()
 	float LightPower = 5.0f;
 	
 	// Material properties
-	vec3 MaterialDiffuseColor = fragmentColor;
-	vec3 MaterialAmbientColor = vec3(0.9,0.9,0.9) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.01,0.01,0.01) * MaterialDiffuseColor;
+	vec4 MaterialDiffuseColor = vec4(fragmentColor, 0);
 
 	// Accumulators
-	vec3 MaterialDiffuseAcc = vec3(0.0, 0.0, 0.0);
-	vec3 MaterialSpecularAcc = vec3(0.0, 0.0, 0.0);
+	vec4 MaterialDiffuseAcc = vec4(0.0, 0.0, 0.0, 0);
 
 	// Normal of the computed fragment, in camera space
 	vec3 n = normalize( Normal_cameraspace );
 	// Eye vector (towards the camera)
 	vec3 E = normalize(EyeDirection_cameraspace);
+
+	int noLightOnFragment = 0;
 
 	for (int i = 0; i < numberOfLights; ++i) {
 		vec3 LightDirection_cameraspace = LightDir[i];
@@ -94,26 +96,22 @@ void main()
 		//  - light is perpendicular to the triangle -> 0
 		//  - light is behind the triangle -> 0
 		float cosTheta = clamp( dot( n,l ), 0,1 );
+		float theta = dot(n, -l);
+		float epsilon = cutoff - outerCutoff;
+		float intensity = clamp((theta - outerCutoff) / epsilon, 0, 1);
 
-		// Direction in which the triangle reflects the light
-		vec3 R = reflect(-l,n);
+		MaterialDiffuseAcc += (MaterialDiffuseColor * LightPower * LightColor[i] * cosTheta / (distance*distance)) * intensity;
 
-		// Cosine of the angle between the Eye vector and the Reflect vector,
-		// clamped to 0
-		//  - Looking into the reflection -> 1
-		//  - Looking elsewhere -> < 1
-		float cosAlpha = clamp( dot( E,R ), 0,1 );
-
-		MaterialDiffuseAcc += (MaterialDiffuseColor * LightPower * LightColor[i] * cosTheta / (distance*distance));
-		// MaterialSpecularAcc += (MaterialSpecularColor * LightPower * LightColor[i] * pow(cosAlpha,5) / (distance*distance));
+		if (cosTheta >= 0)
+			noLightOnFragment += 1;
 	}
 
-	color = vec4(
-		// Ambient : simulates indirect lighting
-		MaterialAmbientColor +
-		// Diffuse : "color" of the object
-		0.4 * clamp( MaterialDiffuseAcc, 0,1 ) +
-		// Specular : reflective highlight, like a mirror
-		MaterialSpecularAcc,
-		opacity/100.f);
+	if (noLightOnFragment > 0) {
+		MaterialDiffuseAcc = vec4(MaterialDiffuseAcc.x / noLightOnFragment,
+			MaterialDiffuseAcc.y / noLightOnFragment,
+			MaterialDiffuseAcc.z / noLightOnFragment,
+			opacity);
+	}
+
+	color = MaterialDiffuseAcc;
 }

@@ -50,21 +50,17 @@ void main()
 	EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
 	// Vector that goes from the vertex to the light, in camera space.
-	// vec3 LightPosition_cameraspace0 = ( V * vec4(LightPosition_worldspace0,1)).xyz;
-	// vec3 LightPosition_cameraspace2 = ( V * vec4(LightPosition_worldspace2,1)).xyz;
-	// LightDirection_cameraspace0 = LightPosition_cameraspace0 + EyeDirection_cameraspace;
-	// LightDirection_cameraspace2 = LightPosition_cameraspace2 + EyeDirection_cameraspace;
 
-	LightDirection_cameraspace0 = ( V * vec4(LightPosition_worldspace0,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace1 = ( V * vec4(LightPosition_worldspace1,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace2 = ( V * vec4(LightPosition_worldspace2,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace3 = ( V * vec4(LightPosition_worldspace3,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace4 = ( V * vec4(LightPosition_worldspace4,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace5 = ( V * vec4(LightPosition_worldspace5,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace6 = ( V * vec4(LightPosition_worldspace6,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace7 = ( V * vec4(LightPosition_worldspace7,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace8 = ( V * vec4(LightPosition_worldspace8,1)).xyz + EyeDirection_cameraspace;
-	LightDirection_cameraspace9 = ( V * vec4(LightPosition_worldspace9,1)).xyz + EyeDirection_cameraspace;
+	LightDirection_cameraspace0 = ( V * vec4(LightPosition_worldspace0,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace1 = ( V * vec4(LightPosition_worldspace1,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace2 = ( V * vec4(LightPosition_worldspace2,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace3 = ( V * vec4(LightPosition_worldspace3,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace4 = ( V * vec4(LightPosition_worldspace4,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace5 = ( V * vec4(LightPosition_worldspace5,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace6 = ( V * vec4(LightPosition_worldspace6,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace7 = ( V * vec4(LightPosition_worldspace7,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace8 = ( V * vec4(LightPosition_worldspace8,1)).xyz;// + EyeDirection_cameraspace;
+	LightDirection_cameraspace9 = ( V * vec4(LightPosition_worldspace9,1)).xyz;// + EyeDirection_cameraspace;
 
 	
 	// Normal of the the vertex, in camera space

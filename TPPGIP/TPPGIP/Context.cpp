@@ -77,22 +77,13 @@ int Context::Init(void)
 	m_points.resize(m_noObjs * 2);
 	m_indices.resize(m_noObjs * 2);
 
-
-	// glm::vec3 startColor(.69f, .98f, .137f);
-	glm::vec3 startColor(.0f, 1.f, .0f);
-	glm::vec3 endColor(1.f, 0.0f, 1.f);
-
-	float rIter = static_cast<float>((endColor.x - startColor.x) / (0.5 * m_noObjs));
-	float gIter = static_cast<float>((endColor.y - startColor.z) / (0.5 * m_noObjs));
-	float bIter = static_cast<float>((endColor.z - startColor.z) / (0.5 * m_noObjs));
-
 	for (int i = 0; i < m_noObjs * 2; i += 2) {
 		float ang = sin(ratio * i);
 		m_points[i].coords = glm::vec3(.5f * j, -15.f + ang, 0.f);
 		m_points[i + 1].coords = glm::vec3(.5f * j, 15.f + ang, 0.f);
 
-		m_points[i].colors = glm::vec3(startColor.x + rIter, startColor.y, startColor.z + bIter);
-		m_points[i + 1].colors = endColor;
+		m_points[i].colors = glm::vec3(1,1,1);
+		m_points[i + 1].colors = glm::vec3(1,1,1);
 
 		m_points[i].normals = glm::vec3(1.f, 0.f, 0.f);
 		m_points[i + 1].normals = glm::vec3(1.f, 0.f, 0.f);
@@ -105,10 +96,6 @@ int Context::Init(void)
 
 		m_indices[i] = i;
 		m_indices[i + 1] = i + 1;
-
-		/*startColor.x += rIter;
-		startColor.y += gIter;
-		startColor.z += bIter;*/
 
 		j++;
 	}
@@ -199,6 +186,46 @@ void Context::mainLoop(void)
 	GLuint MatrixID = glGetUniformLocation(m_programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(m_programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(m_programID, "M");
+
+	std::vector<glm::vec3> lightPositions = {
+		{ 10, 10, 50 },
+		{ -20, 10, 50 },
+		{ 20, 10, 50 },
+		{ 10, 20, 50 },
+		{ 10, -20, 50 },
+		{ 20, 20, 50 },
+		{ 20, -20, 50 },
+		{ -20, 20, 50 },
+		{ -20, 20, 50 },
+		{ 20, 20, 20 }
+	};
+
+	std::vector<glm::vec3> rotateToPosition = {
+		{ 0,0,0},
+		{ 0,0,0 },
+		{ -200,0,0 },
+		{ 200,0,0 },
+		{ -150,0,0 },
+		{ 150,0,0 },
+		{ -100,0,0 },
+		{ 100,0,0 },
+		{ -50,0,0 },
+		{ 50,0,0 }
+	};
+
+	std::vector<glm::vec3> rotateVector = {
+		{ 0.25f, 0, 0 },
+		{ 0.25f, 0.25f, 0 },
+		{ 0.25f, 0.25f, 0.25f },
+		{ 0.25f, 0, 0.25f },
+		{ 0, 0, 0.25f },
+		{ 0, 0.25f, 0.25f },
+		{ 0, 0, 0.25f },
+		{ 0, 0.25f, 0.25f },
+		{ 0, 0, 0.25f },
+		{ 0, 0.25f, 0 }
+	};
+
 	std::vector<GLint> LightIDs = {
 		glGetUniformLocation(m_programID, "LightPosition_worldspace0"),
 		glGetUniformLocation(m_programID, "LightPosition_worldspace1"), 
@@ -263,14 +290,6 @@ void Context::mainLoop(void)
 
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &m_mvp[0][0]);
 			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &m_points[i].ModelMatrix[0][0]);
-
-			glm::vec3 lightPos = m_points[i].coords;
-			float c = 0.1f;
-			for (auto lightID : LightIDs) {
-				glUniform3f(lightID, lightPos.x, lightPos.y * c, lightPos.z);
-				c *= -1;
-				c += (c > 0) ? 0.1f : -0.1f;
-			}
 			
 			/*glUniform3f(LightID2, lightPos.x, 0 - lightPos.y, lightPos.z);*/
 
@@ -280,6 +299,14 @@ void Context::mainLoop(void)
 			m_points[i + 1].angle += 0.07f;
 
 			glDrawArrays(GL_LINES, i, 2);
+		}
+
+		glm::vec3 lightPos = {0,0,0};// = m_points[i].coords;
+
+		for (auto lightID : LightIDs) {
+			lightPositions[lightID] = glm::translate(rotateToPosition[lightID]) * glm::rotate(glm::mat4(1.f), 0.01f, rotateVector[lightID]) * glm::translate(lightPositions[lightID]) *glm::vec4(lightPositions[lightID], 0);
+
+			glUniform3f(lightID, lightPositions[lightID].x, lightPositions[lightID].y, lightPositions[lightID].z);
 		}
 
 		glDisableVertexAttribArray(0);

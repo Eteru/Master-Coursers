@@ -90,10 +90,10 @@ namespace lab7
 				float H = sinf(factor) * T / factor;
 
 				planes[0].at<float>(i, j) = H > -std::numeric_limits<float>::max() ?
-											(planes[0].at<float>(i, j) / (H * cosf(factor))) :
+											(planes[0].at<float>(i, j) / (H * cosf(PI * i * a) * cosf(PI * j * b)  - H * sinf(PI*i*a) * sinf(PI*j*b))) :
 											planes[0].at<float>(i, j);
 				planes[1].at<float>(i, j) = H > -std::numeric_limits<float>::max() ?
-											(planes[1].at<float>(i, j) / (H * (-sinf(factor)))) :
+											(planes[1].at<float>(i, j) / (H * sinf(PI*i*a)* cosf(PI * j * b) - H * cosf(PI*i*a) * sinf(PI*j*b))) :
 											planes[1].at<float>(i, j);
 			}
 		}

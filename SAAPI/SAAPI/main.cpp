@@ -37,12 +37,12 @@ int main(void)
 
 	// lab7::ex1();
 	// lab7::ex2();
-	// lab7::ex3();
+	lab7::ex3();
 
 	// lab8::ex1();
 	// lab8::ex2();
 	// lab8::ex3();
-	lab8::ex4();
+	// lab8::ex4();
 
 	return 0;
 }
