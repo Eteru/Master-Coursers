@@ -110,7 +110,6 @@ namespace lab2
 		crt = 0;
 		A = 10000;
 
-		std::cout << wavHeader.Subchunk2Size;
 		for (int i = 0; i < wavHeader.SamplesPerSec * 2; i++) {
 			data2[i] = static_cast<int16_t>(A * sin(crt));
 			crt += step;
@@ -118,5 +117,18 @@ namespace lab2
 
 		fwrite(data2, 2, wavHeader.SamplesPerSec * 2, fout2);
 		fclose(fout2);
+
+		FILE *fout3;
+		fopen_s(&fout3, "ex2c.wav", "wb");
+		fwrite(&wavHeader, sizeof WAV_HEADER, 1, fout3);
+
+		int16_t *data3 = new int16_t[wavHeader.SamplesPerSec * 2];
+
+		for (int i = 0; i < wavHeader.SamplesPerSec * 2; i++) {
+			data3[i] = data[i] + data2[i];
+		}
+
+		fwrite(data3, 2, wavHeader.SamplesPerSec * 2, fout3);
+		fclose(fout3);
 	}
 }
