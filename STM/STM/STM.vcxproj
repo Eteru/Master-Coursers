@@ -115,6 +115,7 @@
   <ItemGroup>
     <ClInclude Include="lab1.hpp" />
     <ClInclude Include="lab2.hpp" />
+    <ClInclude Include="lab3.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
