@@ -85,7 +85,7 @@ namespace lab3
 			int value = inValue;
 
 			float aux = utils::sign(value) * log(std::powf(256, fabsf(float(value) / 128)) - 1) / 255;
-			outValues.push_back(ceil(32768 * aux));
+			outValues.push_back(ceil(32768 * (value != 0 ? aux : 0)));
 		}
 
 		fwrite(&outValues[0], 2, numSamples, outWavFile);
